@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Mic, Square, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function RecordingInterface() {
+export default function RecordingInterface({ topicId }) {
   const [isRecording, setIsRecording] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -82,6 +82,7 @@ export default function RecordingInterface() {
         const { supabase } = await import('@/lib/supabase');
         if (supabase) {
           await supabase.from('sessions').insert({
+             topic_id: topicId,
              transcript: data.transcript,
              fluency_score: data.score,
              pauses: data.pauses,

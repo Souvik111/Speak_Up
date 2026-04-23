@@ -6,13 +6,16 @@ export const revalidate = 0;
 
 export default async function Home() {
   let topicDisplay = "Convince me why tea is better than coffee.";
+  let topicId = null;
 
   // Fetch dynamic topic from Supabase if connected
   if (supabase) {
-    const { data: topics, error } = await supabase.from('topics').select('prompt');
+    const { data: topics, error } = await supabase.from('topics').select('id, prompt');
     if (!error && topics && topics.length > 0) {
       // Select a random topic for the daily exercise in MVP
-      topicDisplay = topics[Math.floor(Math.random() * topics.length)].prompt;
+      const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+      topicDisplay = randomTopic.prompt;
+      topicId = randomTopic.id;
     }
   }
 
@@ -30,7 +33,7 @@ export default async function Home() {
 
       <div className="pt-8 w-full flex justify-center">
         <Link 
-          href={`/record?topic=${encodeURIComponent(topicDisplay)}`} 
+          href={`/record?topic=${encodeURIComponent(topicDisplay)}${topicId ? `&topicId=${topicId}` : ''}`} 
           className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-all shadow-lg shadow-gray-900/20 hover:shadow-xl hover:-translate-y-0.5"
         >
           <Mic className="w-5 h-5" />

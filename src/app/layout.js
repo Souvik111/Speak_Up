@@ -11,8 +11,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="h-full bg-neutral-50 antialiased">
-      <body className={`${inter.className} min-h-full flex flex-col text-neutral-900`}>
+    <html lang="en" className="h-full bg-neutral-50 antialiased" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-full flex flex-col text-neutral-900`} suppressHydrationWarning>
         <Navbar />
         <main className="flex-1 flex flex-col items-center justify-center pt-8 pb-16 px-4">
           {children}

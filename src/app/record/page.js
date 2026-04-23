@@ -4,6 +4,7 @@ export default async function RecordPage({ searchParams }) {
   // Next.js 15 requires awaiting searchParams
   const params = await searchParams;
   const topic = params?.topic || "Convince me why tea is better than coffee.";
+  const topicId = params?.topicId || null;
 
   return (
     <div className="flex flex-col items-center w-full max-w-xl mx-auto pt-6 sm:pt-12">
@@ -15,7 +16,7 @@ export default async function RecordPage({ searchParams }) {
       </div>
       
       <div className="w-full bg-white border border-gray-200 rounded-3xl shadow-sm p-8 sm:p-12 flex flex-col items-center">
-        <RecordingInterface />
+        <RecordingInterface topicId={topicId} />
       </div>
     </div>
   );
