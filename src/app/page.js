@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mic, ArrowRight } from "lucide-react";
+import { Mic, ArrowRight, BookOpen, MessageSquare, TrendingUp } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export const revalidate = 0;
@@ -20,21 +20,25 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center max-w-2xl w-full text-center mt-12 space-y-8">
-      <div className="space-y-3">
-        <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase">Today's Topic</h2>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
+    <div className="flex flex-col items-center justify-center max-w-2xl w-full text-center mt-8 sm:mt-12">
+      {/* Topic Section */}
+      <div className="animate-fade-in-up space-y-5">
+        <span className="gradient-pill inline-block px-4 py-1.5">
+          Today&apos;s Topic
+        </span>
+        <h1 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight gradient-text">
           {topicDisplay}
         </h1>
-        <p className="text-gray-500 max-w-lg mx-auto pt-2">
-          Take 60 seconds to speak your mind. We'll analyze your hesitations and give you one specific thing to improve tomorrow.
+        <p className="text-base max-w-lg mx-auto pt-1" style={{ color: 'var(--text-secondary)' }}>
+          Take 60 seconds to speak your mind. We&apos;ll analyze your hesitations and give you one specific thing to improve tomorrow.
         </p>
       </div>
 
-      <div className="pt-8 w-full flex justify-center">
+      {/* CTA Button */}
+      <div className="pt-10 w-full flex justify-center animate-fade-in-up-delay-1">
         <Link 
           href={`/record?topic=${encodeURIComponent(topicDisplay)}${topicId ? `&topicId=${topicId}` : ''}`} 
-          className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-all shadow-lg shadow-gray-900/20 hover:shadow-xl hover:-translate-y-0.5"
+          className="glow-button inline-flex items-center justify-center gap-2.5 px-10 py-4 text-lg font-semibold"
         >
           <Mic className="w-5 h-5" />
           <span>Start Speaking</span>
@@ -42,19 +46,32 @@ export default async function Home() {
         </Link>
       </div>
 
-      <div className="pt-16 pb-8 border-t border-gray-200 w-full mt-16">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-gray-600">
-          <div className="flex flex-col items-center">
-            <span className="font-bold text-gray-900 mb-1">1. Read</span>
-            <span>Understand the topic</span>
+      {/* How it works – 3 Glass Cards */}
+      <div className="pt-20 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="glass-card-sm p-6 flex flex-col items-center text-center animate-fade-in-up-delay-1">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+                 style={{ background: 'rgba(139, 92, 246, 0.12)', border: '1px solid rgba(139, 92, 246, 0.2)' }}>
+              <BookOpen className="w-5 h-5 text-violet-400" />
+            </div>
+            <span className="font-bold text-base mb-1" style={{ color: 'var(--text-primary)' }}>1. Read</span>
+            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Understand the topic</span>
           </div>
-          <div className="flex flex-col items-center">
-            <span className="font-bold text-gray-900 mb-1">2. Speak</span>
-            <span>Record for 60 seconds</span>
+          <div className="glass-card-sm p-6 flex flex-col items-center text-center animate-fade-in-up-delay-2">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+                 style={{ background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+              <MessageSquare className="w-5 h-5 text-indigo-400" />
+            </div>
+            <span className="font-bold text-base mb-1" style={{ color: 'var(--text-primary)' }}>2. Speak</span>
+            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Record for 60 seconds</span>
           </div>
-          <div className="flex flex-col items-center">
-            <span className="font-bold text-gray-900 mb-1">3. Improve</span>
-            <span>Get actionable feedback</span>
+          <div className="glass-card-sm p-6 flex flex-col items-center text-center animate-fade-in-up-delay-3">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+                 style={{ background: 'rgba(34, 211, 238, 0.12)', border: '1px solid rgba(34, 211, 238, 0.2)' }}>
+              <TrendingUp className="w-5 h-5 text-cyan-400" />
+            </div>
+            <span className="font-bold text-base mb-1" style={{ color: 'var(--text-primary)' }}>3. Improve</span>
+            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Get actionable feedback</span>
           </div>
         </div>
       </div>

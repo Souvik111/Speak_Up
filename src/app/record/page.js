@@ -8,14 +8,16 @@ export default async function RecordPage({ searchParams }) {
 
   return (
     <div className="flex flex-col items-center w-full max-w-xl mx-auto pt-6 sm:pt-12">
-      <div className="mb-10 text-center space-y-2">
-        <h2 className="text-xs font-bold tracking-widest text-indigo-500 uppercase">Focus on fluency</h2>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-snug">
+      <div className="mb-10 text-center space-y-3 animate-fade-in-up">
+        <span className="gradient-pill inline-block px-3 py-1">
+          Focus on fluency
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-black leading-snug tracking-tight gradient-text">
           {topic}
         </h1>
       </div>
       
-      <div className="w-full bg-white border border-gray-200 rounded-3xl shadow-sm p-8 sm:p-12 flex flex-col items-center">
+      <div className="w-full glass-card p-8 sm:p-12 flex flex-col items-center animate-fade-in-up-delay-1">
         <RecordingInterface topicId={topicId} />
       </div>
     </div>

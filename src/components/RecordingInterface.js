@@ -4,9 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import { Mic, Square, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+const TOTAL_TIME = 60;
+const RING_CIRCUMFERENCE = 2 * Math.PI * 70; // radius = 70
+
 export default function RecordingInterface({ topicId }) {
   const [isRecording, setIsRecording] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -44,7 +47,7 @@ export default function RecordingInterface({ topicId }) {
 
       mediaRecorder.start();
       setIsRecording(true);
-      setTimeLeft(60);
+      setTimeLeft(TOTAL_TIME);
     } catch (error) {
       console.error("Error accessing microphone:", error);
       alert("Please allow microphone access to use this feature.");
@@ -110,34 +113,89 @@ export default function RecordingInterface({ topicId }) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const progress = (TOTAL_TIME - timeLeft) / TOTAL_TIME;
+  const dashOffset = RING_CIRCUMFERENCE * (1 - progress);
+
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      {/* Visualizer / Timer */}
+      {/* Timer Ring */}
       <div className="relative mb-12 flex items-center justify-center">
+        {/* Breathing pulse rings when recording */}
         {isRecording && (
-          <div className="absolute inset-0 w-48 h-48 bg-red-100 rounded-full animate-ping opacity-75"></div>
+          <>
+            <div className="absolute w-52 h-52 rounded-full animate-breathe"
+                 style={{ border: '2px solid rgba(244, 63, 94, 0.3)' }}></div>
+            <div className="absolute w-60 h-60 rounded-full animate-breathe-delay-1"
+                 style={{ border: '1.5px solid rgba(244, 63, 94, 0.2)' }}></div>
+            <div className="absolute w-68 h-68 rounded-full animate-breathe-delay-2"
+                 style={{ border: '1px solid rgba(244, 63, 94, 0.1)', width: '272px', height: '272px' }}></div>
+          </>
         )}
-        <div className={`relative z-10 flex items-center justify-center w-48 h-48 rounded-full border-4 transition-colors duration-300 ${isRecording ? 'border-red-500 bg-red-50 text-red-600' : 'border-gray-100 bg-gray-50 text-gray-800'}`}>
-          <span className="text-4xl font-mono tracking-tighter">
-            {formatTime(timeLeft)}
-          </span>
+
+        {/* SVG Ring */}
+        <div className="relative z-10 w-48 h-48">
+          <svg viewBox="0 0 160 160" className="w-full h-full -rotate-90">
+            <defs>
+              <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor={isRecording ? "#f43f5e" : "#8b5cf6"} />
+                <stop offset="100%" stopColor={isRecording ? "#f97316" : "#22d3ee"} />
+              </linearGradient>
+            </defs>
+            {/* Background ring */}
+            <circle
+              cx="80" cy="80" r="70"
+              fill="none"
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth="6"
+            />
+            {/* Progress ring */}
+            <circle
+              cx="80" cy="80" r="70"
+              fill="none"
+              stroke="url(#ringGradient)"
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeDasharray={RING_CIRCUMFERENCE}
+              strokeDashoffset={dashOffset}
+              style={{ transition: 'stroke-dashoffset 1s linear' }}
+            />
+          </svg>
+          {/* Timer text centered */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className={`text-5xl font-light tracking-tight font-mono ${isRecording ? 'text-rose-400' : ''}`}
+                  style={{ color: isRecording ? undefined : 'var(--text-primary)' }}>
+              {formatTime(timeLeft)}
+            </span>
+            {isRecording && (
+              <span className="text-xs font-semibold uppercase tracking-widest mt-1 text-rose-400/60">
+                Recording
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Controls */}
       <div className="flex flex-col items-center">
         {isProcessing ? (
-          <div className="flex flex-col items-center text-indigo-600 space-y-4">
-            <Loader2 className="w-10 h-10 animate-spin" />
-            <p className="font-medium animate-pulse">Analyzing your fluency...</p>
+          <div className="flex flex-col items-center space-y-4">
+            {/* Gradient spinner */}
+            <div className="relative w-12 h-12">
+              <div className="absolute inset-0 rounded-full animate-spin-slow"
+                   style={{ background: 'conic-gradient(from 0deg, transparent, #8b5cf6, #22d3ee, transparent)', mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0)', WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0)' }}>
+              </div>
+            </div>
+            <p className="font-medium animate-shimmer" style={{ color: 'var(--text-secondary)' }}>
+              Analyzing your fluency...
+            </p>
           </div>
         ) : (
           <button
             onClick={isRecording ? stopRecording : startRecording}
-            className={`flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-lg transition-all shadow-lg hover:-translate-y-1 ${
+            className={`flex items-center justify-center gap-3 px-10 py-4 rounded-full font-bold text-lg text-white cursor-pointer ${
               isRecording 
-                ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30' 
-                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-600/30'
+                ? 'glow-button glow-button-rose' 
+                : 'glow-button'
             }`}
           >
             {isRecording ? (
@@ -155,7 +213,7 @@ export default function RecordingInterface({ topicId }) {
         )}
         
         {!isRecording && !isProcessing && (
-          <p className="mt-6 text-sm text-gray-500">
+          <p className="mt-6 text-sm" style={{ color: 'var(--text-muted)' }}>
             Press the button and speak continuously.
           </p>
         )}
